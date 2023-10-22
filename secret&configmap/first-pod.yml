@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-pod
+  labels:
+    app: first
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: first
+  template:
+    metadata:
+      labels:
+        app: first
+    spec:
+      containers:
+      - name: first-pod
+        image: nginx
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+          - containerPort: 80
+        # env:
+        # - name: configmap_import
+        #   valueFrom:
+        #     configMapKeyRef:
+        #       name: first-configmap
+        #       key: name
+        # - name: secret_import
+        #   valueFrom:
+        #     secretKeyRef:
+        #       name: first-secret
+        #       key: password
+        volumeMounts:
+        - name: configmap-volume
+          mountPath: /home
+        - name: secret-volume
+          mountPath: /home/secret
+
+      volumes:
+      - name: configmap-volume
+        configMap: 
+          name: first-configmap
+
+      - name: secret-volume
+        secret:
+          secretName: first-secret
+
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: first-service
+spec:
+  selector:
+    app: first
+  type: NodePort
+  ports:
+  - port: 90
+    targetPort: 80
+    nodePort: 30002
+
+

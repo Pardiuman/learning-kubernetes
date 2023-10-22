@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-app
+spec:
+  replicas: 4
+  selector:
+    matchLabels:
+      app: first-app
+  strategy:
+    type: RollingUpdate
+    maxSurge: 25%
+    maxUnavailable: 25%
+  template:
+    metadata:
+      labels:
+        app: first-app
+    spec:
+      containers:
+      - name: first-app
+        image: nginx
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 80

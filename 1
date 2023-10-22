@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-container-pod
+spec:
+  containers:
+  - name: main-app
+    image: nginx
+    ports:
+    - containerPort: 80
+  initContainers:
+  - name: init-database
+    image: busybox:1.28
+    command: ['sh', '-c', 'until nc -z -v -w5 my-database 5432; do echo "Waiting for database..."; sleep 5; done;']
+

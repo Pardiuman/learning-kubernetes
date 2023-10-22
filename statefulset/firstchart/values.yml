@@ -1,0 +1,11 @@
+replicas: 2
+image:
+  name: nginx
+  version: 1
+containerPort:
+  Port: 80
+services:
+  port: 90
+  type: NodePort
+  targetPort: 80
+
