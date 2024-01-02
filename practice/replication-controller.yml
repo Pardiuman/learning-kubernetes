@@ -1,0 +1,27 @@
+apiVersion: apps/v1
+kind: ReplicaSet
+metadata: 
+  name: repl1
+spec:
+  replicas: 2
+  selector:
+    matchExpressions:
+      - key: web
+        operator: In 
+        values: 
+          - nginx
+          - http
+      - key: app
+        operator: In
+        values: ["webserver1"]
+  template:
+    metadata:
+      labels:
+        web: nginx
+        app: webserver1
+    spec:
+      containers:
+        - name: repl-container
+          image: nginx
+          ports:
+            - containerPort: 80

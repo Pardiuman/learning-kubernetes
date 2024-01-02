@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: first-deploy
+  labels:
+    server: webserver
+spec:
+  replicas: 3
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 1
+  selector:
+    matchLabels:
+      server: nginx
+  template:
+    metadata:
+      labels:
+        server: nginx
+    spec:
+      containers:
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+              name: nginx-port
+          resources:
+            limits:
+              cpu: 256m
+              memory: 256Mi
+          env:
+            # - name: index
+            #   valueFrom:
+            #     configMapKeyRef:
+            #       name: cm1
+            #       key: index.html
+            - name: secretmount
+              valueFrom:
+                secretKeyRef:
+                  name: secret1
+                  key: username
+          envFrom:
+            # - configMapRef:
+            #     name: cm2
+            - secretRef:
+                name: secret1
+          volumeMounts:
+            - name: from-cm
+              mountPath: /index
+      volumes:
+        - name: from-cm
+          configMap:
+            name: cm1
+        - name: secert
+          secret:
+            secretName: secret1
+        
